@@ -30,6 +30,20 @@ installed, you can use this plpython function:
 
     $$ LANGUAGE plpythonu
 
+In postgresql90 it sometimes does not work as we wish, so we can use one like this:
+
+    CREATE OR REPLACE FUNCTION unaccent(text) RETURNS text AS $$
+    DECLARE input_string text := $1;
+    BEGIN
+        input_string := translate(input_string, 'àáâäãåāăąÀÁÂÄÃÅĀĂĄ', 'aaaaaaaaaaaaaaaaaa');
+        input_string := translate(input_string, 'èéêëēĕėęěÈÉÊËÊĒĔĖĘĚ', 'eeeeeeeeeeeeeeeeeee');
+        input_string := translate(input_string, 'ìíîïĩīĭÌÍÎÏĨĪĬ', 'iiiiiiiiiiiiii');
+        input_string := translate(input_string, 'òóôöõōŏőÒÓÔÖÕŌŎŐ', 'oooooooooooooooo');
+        input_string := translate(input_string, 'ùúûüũūŭůÙÚÛÜŨŪŬŮ', 'uuuuuuuuuuuuuuuu');
+        input_string := translate(input_string, 'ñÑçÇ', 'nncc');
+        return input_string;
+    END; $$ LANGUAGE plpgsql IMMUTABLE;
+
 
 Usage
 -----
